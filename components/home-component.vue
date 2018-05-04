@@ -10,6 +10,9 @@
 
 		<q-page-container class='scroll-content'>
 			<q-page>
+
+				<button @click="enableNotifications">Notifications</button>
+
 				<div v-if='billers.length > 0'>
 
 					<!-- unpaid bills -->
@@ -67,6 +70,37 @@ module.exports = {
 		};
 	},
 	methods: {
+		enableNotifications() {
+			if ("Notification" in window) {
+
+				Notification.requestPermission()
+					.then(res => {
+						console.log(res)
+						if (res !== 'granted') {
+							console.log('permission was denied for notifications')
+							alert('denied...')
+						} else {
+							alert('notificiation permission granted')
+
+
+							navigator.serviceWorker.ready.then(function (registration) {
+								registration.showNotification('Vibration Sample', {
+									body: 'Buzz! Buzz!',
+									icon: '../images/touch/chrome-touch-icon-192x192.png',
+									vibrate: [200, 100, 200, 100, 200, 100, 200],
+									tag: 'vibration-sample'
+								});
+							});
+
+
+						}
+					})
+
+			} else {
+				alert("This browser does not support notifications, I am sorry :/")
+				console.log('This browser does not support notifications :/')
+			}
+		},
 		addBiller() {
 
 			console.log("adding test biller");
